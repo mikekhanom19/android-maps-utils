@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
@@ -58,6 +59,7 @@ import com.google.maps.android.data.kml.KmlStyle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -70,7 +72,7 @@ public class Renderer {
 
     private final static Object FEATURE_NOT_ON_MAP = null;
 
-    private static final int LRU_CACHE_SIZE = 50;
+    protected static final int LRU_CACHE_SIZE = 50;
 
     private GoogleMap mMap;
 
@@ -86,9 +88,9 @@ public class Renderer {
 
     private HashMap<KmlGroundOverlay, GroundOverlay> mGroundOverlays;
 
-    private final ArrayList<String> mMarkerIconUrls;
+    private final Set<String> mMarkerIconUrls;
 
-    private final LruCache<String, Bitmap> mImagesCache;
+    private final LruCache<String, BitmapDescriptor> mImagesCache;
 
     private boolean mLayerOnMap;
 
@@ -113,7 +115,7 @@ public class Renderer {
         mContext = context;
         mLayerOnMap = false;
         mImagesCache = new LruCache<>(LRU_CACHE_SIZE);
-        mMarkerIconUrls = new ArrayList<>();
+        mMarkerIconUrls = new HashSet<>();
         mStylesRenderer = new HashMap<>();
         mDefaultPointStyle = null;
         mDefaultLineStringStyle = null;
@@ -227,9 +229,9 @@ public class Renderer {
     /**
      * Gets the URLs stored for the Marker icons
      *
-     * @return mMarkerIconUrls ArrayList of URLs
+     * @return mMarkerIconUrls Set of URLs
      */
-    public ArrayList<String> getMarkerIconUrls()  { return mMarkerIconUrls; }
+    public Set<String> getMarkerIconUrls()  { return mMarkerIconUrls; }
 
     /**
      * Gets the styles for KML placemarks
@@ -250,7 +252,7 @@ public class Renderer {
      *
      * @return mImagesCache
      */
-    public LruCache<String, Bitmap> getImagesCache() { return mImagesCache; }
+    public LruCache<String, BitmapDescriptor> getImagesCache() { return mImagesCache; }
 
     /**
      * Gets the ground overlays on the current layer
@@ -331,8 +333,8 @@ public class Renderer {
         mStylesRenderer.putAll(styles);
     }
 
-    public void putImagesCache(String groundOverlayUrl, Bitmap bitmap) {
-        mImagesCache.put(groundOverlayUrl, bitmap);
+    public void putImagesCache(String groundOverlayUrl, BitmapDescriptor bitmapDescriptor) {
+        mImagesCache.put(groundOverlayUrl, bitmapDescriptor);
     }
 
     /**
@@ -839,9 +841,8 @@ public class Renderer {
      */
     private void addMarkerIcons(String styleUrl, MarkerOptions markerOptions) {
         if (mImagesCache.get(styleUrl) != null) {
-            // Bitmap stored in cache
-            Bitmap bitmap = mImagesCache.get(styleUrl);
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+            // BitmapDescriptor stored in cache
+            markerOptions.icon(mImagesCache.get(styleUrl));
         } else if (!mMarkerIconUrls.contains(styleUrl)) {
             mMarkerIconUrls.add(styleUrl);
         }
