@@ -1,6 +1,6 @@
 package com.google.maps.android.data.kml;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -61,8 +61,8 @@ public class KmlRenderer  extends Renderer {
      */
     private String mDirectoryName;
 
-    /* package */ KmlRenderer(GoogleMap map, Context context, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager, String directoryName) {
-        super(map, context, markerManager, polygonManager, polylineManager, groundOverlayManager);
+    /* package */ KmlRenderer(GoogleMap map, Activity activity, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager, String directoryName) {
+        super(map, activity, markerManager, polygonManager, polylineManager, groundOverlayManager);
         mDirectoryName = directoryName;
         mGroundOverlayUrls = new ArrayList<>();
         mMarkerIconsDownloaded = false;
@@ -70,7 +70,7 @@ public class KmlRenderer  extends Renderer {
 
         //Set up bitmap options
         BitmapFactory.Options options = new BitmapFactory.Options();
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
         options.inScreenDensity = metrics.densityDpi;
         options.inTargetDensity =  metrics.densityDpi;
         options.inDensity = DisplayMetrics.DENSITY_DEFAULT;

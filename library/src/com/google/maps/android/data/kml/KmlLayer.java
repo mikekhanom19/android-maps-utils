@@ -11,7 +11,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import android.content.Context;
+import android.app.Activity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,75 +21,72 @@ import java.io.InputStream;
  */
 public class KmlLayer extends Layer {
 
-
     /**
      * Creates a new KmlLayer object - addLayerToMap() must be called to trigger rendering onto a map.
      *
-     * @param map        GoogleMap object
+     * @param map GoogleMap object
      * @param resourceId Raw resource KML file
-     * @param context    Context object
+     * @param activity Activity object
      * @throws XmlPullParserException if file cannot be parsed
      * @throws IOException if I/O error
      */
-     public KmlLayer(GoogleMap map, int resourceId, Context context)
+    public KmlLayer(GoogleMap map, int resourceId, Activity activity)
+            throws XmlPullParserException, IOException {
+        this(map, resourceId, null);
+    }
+
+    /**
+     * Creates a new KmlLayer object
+     *
+     * @param map GoogleMap object
+     * @param stream InputStream containing KML file
+     * @param activity Activity object
+     * @throws XmlPullParserException if file cannot be parsed
+     * @throws IOException if I/O error
+     */
+     public KmlLayer(GoogleMap map, InputStream stream, Activity activity)
              throws XmlPullParserException, IOException {
-         this(map, resourceId, context, null);
+         this(map, stream, activity, null);
      }
 
-
-    /**
-     * Creates a new KmlLayer object
-     *
-     * @param map    GoogleMap object
-     * @param stream InputStream containing KML file
-     * @param context Context object
-     * @throws XmlPullParserException if file cannot be parsed
-     * @throws IOException if I/O error
-     */
-     public KmlLayer(GoogleMap map, InputStream stream, Context context)
-             throws XmlPullParserException, IOException {
-         this(map, stream, context, null);
-     }
-
-
     /**
      * Creates a new KmlLayer object - addLayerToMap() must be called to trigger rendering onto a map.
      *
-     * @param map        GoogleMap object
+     * @param map GoogleMap object
      * @param resourceId Raw resource KML file
-     * @param context    Context object
+     * @param activity Activity object
      * @param directoryName the fully qualified directory name to look in (in the android file
      *                      system) for any relative-path images, or null to only look online.
      * @throws XmlPullParserException if file cannot be parsed
      * @throws IOException if I/O error
      */
-    public KmlLayer(GoogleMap map, int resourceId, Context context, String directoryName)
+    public KmlLayer(GoogleMap map, int resourceId, Activity activity, String directoryName)
             throws XmlPullParserException, IOException {
-        this(map, context.getResources().openRawResource(resourceId), context, new MarkerManager(map), new PolygonManager(map), new PolylineManager(map), new GroundOverlayManager(map), directoryName);
+        this(map, activity.getResources().openRawResource(resourceId), activity, new MarkerManager(map), new PolygonManager(map), new PolylineManager(map), new GroundOverlayManager(map), directoryName);
     }
 
     /**
      * Creates a new KmlLayer object
      *
-     * @param map    GoogleMap object
+     * @param map GoogleMap object
      * @param stream InputStream containing KML file
-     * @param context Context object
+     * @param activity Activity object
      * @param directoryName the fully qualified directory name to look in (in the android file
      *                      system) for any relative-path images, or null to only look online.
      * @throws XmlPullParserException if file cannot be parsed
      * @throws IOException if I/O error
      */
-    public KmlLayer(GoogleMap map, InputStream stream, Context context, String directoryName)
+    public KmlLayer(GoogleMap map, InputStream stream, Activity activity, String directoryName)
             throws XmlPullParserException, IOException {
-        this(map, stream, context, new MarkerManager(map), new PolygonManager(map), new PolylineManager(map), new GroundOverlayManager(map), directoryName);
+        this(map, stream, activity, new MarkerManager(map), new PolygonManager(map), new PolylineManager(map), new GroundOverlayManager(map), directoryName);
     }
 
     /**
      * Creates a new KmlLayer object - addLayerToMap() must be called to trigger rendering onto a map.
      *
-     * @param map        GoogleMap object
+     * @param map GoogleMap object
      * @param resourceId Raw resource KML file
-     * @param context    Context object
+     * @param activity Activity object
      * @param markerManager marker manager to create marker collection from
      * @param polygonManager polygon manager to create polygon collection from
      * @param polylineManager polyline manager to create polyline collection from
@@ -97,17 +94,17 @@ public class KmlLayer extends Layer {
      * @throws XmlPullParserException if file cannot be parsed
      * @throws IOException if I/O error
      */
-    public KmlLayer(GoogleMap map, int resourceId, Context context, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager)
+    public KmlLayer(GoogleMap map, int resourceId, Activity activity, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager)
             throws XmlPullParserException, IOException {
-        this(map, context.getResources().openRawResource(resourceId), context, markerManager, polygonManager, polylineManager, groundOverlayManager, null);
+        this(map, activity.getResources().openRawResource(resourceId), activity, markerManager, polygonManager, polylineManager, groundOverlayManager, null);
     }
 
     /**
      * Creates a new KmlLayer object
      *
-     * @param map    GoogleMap object
+     * @param map GoogleMap object
      * @param stream InputStream containing KML file
-     * @param context Context object
+     * @param activity Activity object
      * @param markerManager marker manager to create marker collection from
      * @param polygonManager polygon manager to create polygon collection from
      * @param polylineManager polyline manager to create polyline collection from
@@ -115,17 +112,17 @@ public class KmlLayer extends Layer {
      * @throws XmlPullParserException if file cannot be parsed
      * @throws IOException if I/O error
      */
-    public KmlLayer(GoogleMap map, InputStream stream, Context context, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager)
+    public KmlLayer(GoogleMap map, InputStream stream, Activity activity, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager)
             throws XmlPullParserException, IOException {
-        this(map, stream, context, markerManager, polygonManager, polylineManager, groundOverlayManager, null);
+        this(map, stream, activity, markerManager, polygonManager, polylineManager, groundOverlayManager, null);
     }
 
     /**
      * Creates a new KmlLayer object - addLayerToMap() must be called to trigger rendering onto a map.
      *
-     * @param map        GoogleMap object
+     * @param map GoogleMap object
      * @param resourceId Raw resource KML file
-     * @param context    Context object
+     * @param activity Activity object
      * @param markerManager marker manager to create marker collection from
      * @param polygonManager polygon manager to create polygon collection from
      * @param polylineManager polyline manager to create polyline collection from
@@ -135,9 +132,9 @@ public class KmlLayer extends Layer {
      * @throws XmlPullParserException if file cannot be parsed
      * @throws IOException if I/O error
      */
-    public KmlLayer(GoogleMap map, int resourceId, Context context, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager, String directoryName)
+    public KmlLayer(GoogleMap map, int resourceId, Activity activity, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager, String directoryName)
             throws XmlPullParserException, IOException {
-        this(map, context.getResources().openRawResource(resourceId), context, markerManager, polygonManager, polylineManager, groundOverlayManager, directoryName);
+        this(map, activity.getResources().openRawResource(resourceId), activity, markerManager, polygonManager, polylineManager, groundOverlayManager, directoryName);
     }
 
     /**
@@ -145,7 +142,7 @@ public class KmlLayer extends Layer {
      *
      * @param map    GoogleMap object
      * @param stream InputStream containing KML file
-     * @param context Context object
+     * @param activity Activity object
      * @param markerManager marker manager to create marker collection from
      * @param polygonManager polygon manager to create polygon collection from
      * @param polylineManager polyline manager to create polyline collection from
@@ -155,12 +152,12 @@ public class KmlLayer extends Layer {
      * @throws XmlPullParserException if file cannot be parsed
      * @throws IOException if I/O error
      */
-    public KmlLayer(GoogleMap map, InputStream stream, Context context, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager, String directoryName)
+    public KmlLayer(GoogleMap map, InputStream stream, Activity activity, MarkerManager markerManager, PolygonManager polygonManager, PolylineManager polylineManager, GroundOverlayManager groundOverlayManager, String directoryName)
             throws XmlPullParserException, IOException {
         if (stream == null) {
             throw new IllegalArgumentException("KML InputStream cannot be null");
         }
-        KmlRenderer mRenderer = new KmlRenderer(map, context, markerManager, polygonManager, polylineManager, groundOverlayManager, directoryName);
+        KmlRenderer mRenderer = new KmlRenderer(map, activity, markerManager, polygonManager, polylineManager, groundOverlayManager, directoryName);
         XmlPullParser xmlPullParser = createXmlParser(stream);
         KmlParser parser = new KmlParser(xmlPullParser);
         parser.parseKml();
