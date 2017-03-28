@@ -32,7 +32,7 @@ public class KmlLayer extends Layer {
      */
     public KmlLayer(GoogleMap map, int resourceId, Activity activity)
             throws XmlPullParserException, IOException {
-        this(map, resourceId, null);
+        this(map, resourceId, activity, null);
     }
 
     /**
