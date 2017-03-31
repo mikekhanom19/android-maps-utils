@@ -437,15 +437,29 @@ public class Renderer {
      *
      * @param features features to remove
      */
-    protected static void removeFeatures(HashMap<Feature, Object> features) {
+    protected void removeFeatures(HashMap<Feature, Object> features) {
         // Remove map object from the map
         for (Object mapObject : features.values()) {
             if (mapObject instanceof Marker) {
-                ((Marker) mapObject).remove();
+                mMarkers.remove((Marker) mapObject);
             } else if (mapObject instanceof Polyline) {
-                ((Polyline) mapObject).remove();
+                mPolylines.remove((Polyline) mapObject);
             } else if (mapObject instanceof Polygon) {
-                ((Polygon) mapObject).remove();
+                mPolygons.remove((Polygon) mapObject);
+            }
+        }
+    }
+
+    /**
+     * Removes all ground overlays in the given hashmap
+     *
+     * @param groundOverlays hashmap of ground overlays to remove
+     */
+    protected void removeGroundOverlays(HashMap<KmlGroundOverlay, GroundOverlay> groundOverlays) {
+        for (GroundOverlay groundOverlay : groundOverlays.values()) {
+            // Ground overlay values may be null if their image was not yet downloaded
+            if (groundOverlay != null) {
+                mGroundOverlays.remove(groundOverlay);
             }
         }
     }
@@ -550,6 +564,8 @@ public class Renderer {
             mPolylines.remove((Polyline) mapObject);
         } else if (mapObject instanceof Polygon) {
             mPolygons.remove((Polygon) mapObject);
+        } else if (mapObject instanceof GroundOverlay) {
+            mGroundOverlays.remove((GroundOverlay) mapObject);
         } else if (mapObject instanceof ArrayList) {
             for (Object mapObjectElement : (ArrayList) mapObject) {
                 removeFromMap(mapObjectElement);

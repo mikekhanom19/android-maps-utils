@@ -46,8 +46,6 @@ public class KmlRenderer  extends Renderer {
 
     private boolean mGroundOverlayImagesDownloaded;
 
-    private HashMap<KmlGroundOverlay, GroundOverlay> mGroundOverlays;
-
     /**
      * Options to auto-scale the bitmap images according to screen density.
      */
@@ -121,20 +119,6 @@ public class KmlRenderer  extends Renderer {
     }
 
     /**
-     * Removes all ground overlays in the given hashmap
-     *
-     * @param groundOverlays hashmap of ground overlays to remove
-     */
-    private void removeGroundOverlays(HashMap<KmlGroundOverlay, GroundOverlay> groundOverlays) {
-        for (GroundOverlay groundOverlay : groundOverlays.values()) {
-            //For some reason, it was getting null overlays. This fixed the problem. I guess it's from malformed KML files.
-            if (groundOverlay != null) {
-                groundOverlay.remove();
-            }
-        }
-    }
-
-    /**
      * Removes all the KML data from the map and clears all the stored placemarks of those which
      * are in a container.
      */
@@ -148,11 +132,10 @@ public class KmlRenderer  extends Renderer {
 
     public void addLayerToMap() {
         setLayerVisibility(true);
-        mGroundOverlays = getGroundOverlayMap();
         mContainers = getContainerList();
         putStyles();
         assignStyleMap(getStyleMaps(), getStylesRenderer());
-        addGroundOverlays(mGroundOverlays, mContainers);
+        addGroundOverlays(getGroundOverlayMap(), mContainers);
         addContainerGroupToMap(mContainers, true);
         addPlacemarksToMap(getAllFeatures());
         if (!mGroundOverlayImagesDownloaded) {
@@ -223,7 +206,7 @@ public class KmlRenderer  extends Renderer {
      * @return iterable of KmlGroundOverlay objects
      */
     public Iterable<KmlGroundOverlay> getGroundOverlays() {
-        return mGroundOverlays.keySet();
+        return getGroundOverlayMap().keySet();
     }
 
     /**
@@ -231,7 +214,7 @@ public class KmlRenderer  extends Renderer {
      */
     public void removeLayerFromMap() {
         removePlacemarks(getAllFeatures());
-        removeGroundOverlays(mGroundOverlays);
+        removeGroundOverlays(getGroundOverlayMap());
         if (hasNestedContainers()) {
             removeContainers(getNestedContainers());
         }
@@ -390,7 +373,7 @@ public class KmlRenderer  extends Renderer {
             if (groundOverlayUrl != null && groundOverlay.getLatLngBox() != null) {
                 // Can't draw overlay if url and coordinates are missing
                 if (getImagesCache().get(groundOverlayUrl) != null) {
-                    addGroundOverlayToMap(groundOverlayUrl, mGroundOverlays, true);
+                    addGroundOverlayToMap(groundOverlayUrl, getGroundOverlayMap(), true);
                 } else if (!mGroundOverlayUrls.contains(groundOverlayUrl)) {
                     mGroundOverlayUrls.add(groundOverlayUrl);
                 }
@@ -558,7 +541,7 @@ public class KmlRenderer  extends Renderer {
             } else {
                 putImagesCache(mGroundOverlayUrl, bitmap);
                 if (isLayerOnMap()) {
-                    addGroundOverlayToMap(mGroundOverlayUrl, mGroundOverlays, true);
+                    addGroundOverlayToMap(mGroundOverlayUrl, getGroundOverlayMap(), true);
                     addGroundOverlayInContainerGroups(mGroundOverlayUrl, mContainers, true);
                 }
             }
